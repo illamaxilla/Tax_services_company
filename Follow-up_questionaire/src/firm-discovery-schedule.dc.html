@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin:0; padding:0; background:#EDF1EB; -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; }
+  * { box-sizing:border-box; }
+  a { color:#7A2E2E; text-decoration:underline; text-underline-offset:2px; }
+  a:hover { color:#16241E; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible { outline:2px solid #1F5D4C; outline-offset:2px; }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-rise] { animation: rise .28s ease both; }
+    @keyframes rise { from { opacity:0; transform:translateY(5px); } }
+  }
+  @media print {
+    @page { margin:14mm; }
+    html, body { background:#fff; }
+    [data-noprint] { display:none !important; }
+    [data-sheet] { border:0 !important; background:#fff !important; padding:0 !important; }
+    [data-break] { break-inside:avoid; }
+    input, textarea { background:#fff !important; }
+  }
+</style>
+</helmet>
+<div style="max-width:{{ shellMax }};margin:0 auto;padding:0 20px 40px;font-family:'Public Sans',system-ui,sans-serif;font-size:16px;line-height:1.6;color:#16241E">
+
+  <header style="padding:44px 0 22px;border-bottom:2px solid #16241E">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin:0 0 10px">
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7A2E2E;margin:0">Design partner intake</p>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7C8A81;margin:0">Schedule DP&#8209;1 · Rev. August 2026</p>
+    </div>
+    <h1 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:clamp(28px,4.6vw,40px);line-height:1.14;margin:0 0 10px;letter-spacing:-.01em">Firm Discovery Schedule</h1>
+    <p data-noprint="1" style="margin:0;max-width:60ch;color:#4C5D54;font-size:15px;text-wrap:pretty">A short factual record of how your firm operates. Answer what you can from memory and leave the rest — anything you skip we'll cover in conversation. Your answers are kept in this browser as you type, so you can close the page and come back to it.</p>
+  </header>
+
+  <div aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">{{ announce }}</div>
+
+  <sc-if value="{{ showWideRail }}" hint-placeholder-val="{{ true }}">
+    <nav aria-label="Parts" data-noprint="1" style="padding:14px 0;border-bottom:1px solid #CFDACF">
+      <ul style="display:flex;flex-wrap:wrap;gap:2px;margin:0;padding:0;list-style:none">
+        <sc-for list="{{ rail }}" as="r" hint-placeholder-count="8">
+          <li style="flex:1 1 0;min-width:52px">
+            <button type="button" aria-current="{{ r.current }}" onClick="{{ r.onClick }}" style="{{ r.style }}">{{ r.label }}</button>
+          </li>
+        </sc-for>
+      </ul>
+    </nav>
+  </sc-if>
+
+  <sc-if value="{{ showCompactRail }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Parts" data-noprint="1" style="padding:14px 0;border-bottom:1px solid #CFDACF;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#16241E">{{ compactLabel }}</span>
+      <div style="display:flex;gap:5px;align-items:center">
+        <sc-for list="{{ rail }}" as="r" hint-placeholder-count="8">
+          <button type="button" aria-label="{{ r.aria }}" aria-current="{{ r.current }}" onClick="{{ r.onClick }}" style="{{ r.dotStyle }}"></button>
+        </sc-for>
+      </div>
+    </nav>
+  </sc-if>
+
+  <sc-if value="{{ showSheetHead }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 0;border-bottom:1px solid #CFDACF;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7C8A81">{{ sheetHead }}</div>
+  </sc-if>
+
+  <main>
+    <sc-if value="{{ inForm }}" hint-placeholder-val="{{ true }}">
+      <sc-for list="{{ sections }}" as="s" hint-placeholder-count="1">
+        <div data-rise="1" style="padding:36px 0 4px">
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81;margin:0">{{ s.meta }}</p>
+          <h2 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:clamp(22px,3.4vw,29px);margin:4px 0 8px;letter-spacing:-.01em">{{ s.title }}</h2>
+          <p style="margin:0 0 6px;color:#4C5D54;font-size:14.5px;max-width:58ch;text-wrap:pretty">{{ s.note }}</p>
+          <sc-if value="{{ s.hasNotice }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:{{ s.cols }} 1fr;margin:18px 0 0;border-top:1px solid #A9B9AC;border-bottom:1px solid #CFDACF">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7A2E2E;padding:11px 0 0;text-align:center">Note</div>
+              <div style="padding:10px 0 12px {{ s.pad }};font-size:13.5px;color:#4C5D54;max-width:58ch;text-wrap:pretty">{{ s.notice }}</div>
+            </div>
+          </sc-if>
+        </div>
+
+        <sc-for list="{{ s.lines }}" as="l" hint-placeholder-count="6">
+          <div data-rise="1" data-break="1" style="display:grid;grid-template-columns:{{ l.grid }};border-top:1px solid #CFDACF;border-bottom:1px solid {{ l.bb }}">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7C8A81;padding:20px 0 0;border-right:1px solid #CFDACF;text-align:center">{{ l.n }}</div>
+            <div style="padding:18px 0 20px {{ l.pad }};min-width:0">
+
+              <sc-if value="{{ l.isGroup }}" hint-placeholder-val="{{ false }}">
+                <fieldset style="border:0;margin:0;padding:0;min-width:0">
+                  <legend style="display:block;font-weight:500;font-size:15.5px;padding:0;margin:0 0 3px;max-width:58ch;text-wrap:pretty">{{ l.q }}</legend>
+                  <sc-if value="{{ l.hintInline }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:block;color:#7C8A81;font-size:13px;margin:0 0 10px">{{ l.hint }}</span>
+                  </sc-if>
+
+                  <sc-if value="{{ l.isChoice }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+                      <sc-for list="{{ l.opts }}" as="o" hint-placeholder-count="3">
+                        <span style="position:relative;display:inline-flex">
+                          <input type="{{ o.type }}" name="{{ o.name }}" id="{{ o.id }}" checked="{{ o.checked }}" onChange="{{ o.onChange }}" onFocus="{{ o.onFocus }}" onBlur="{{ o.onBlur }}" style="position:absolute;width:1px;height:1px;opacity:0;margin:0" />
+                          <label for="{{ o.id }}" style="{{ o.style }}">{{ o.label }}</label>
+                        </span>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ l.isTally }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:grid;grid-template-columns:1fr 84px;gap:8px 14px;max-width:420px;align-items:center;margin-top:8px">
+                      <sc-for list="{{ l.rows }}" as="t" hint-placeholder-count="6">
+                        <label for="{{ t.id }}" style="font-size:14.5px;color:#4C5D54">{{ t.label }}</label>
+                        <input type="number" min="0" id="{{ t.id }}" value="{{ t.value }}" onChange="{{ t.onChange }}" onWheel="{{ t.noWheel }}" style="width:100%;background:#FCFDFB;border:1px solid #A9B9AC;border-radius:2px;padding:10px 11px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#16241E" />
+                      </sc-for>
+                      <div style="grid-column:1/-1;border-top:1px solid #CFDACF;padding-top:9px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ l.sumColor }}">{{ l.sumText }}</div>
+                    </div>
+                  </sc-if>
+                </fieldset>
+              </sc-if>
+
+              <sc-if value="{{ l.isPlain }}" hint-placeholder-val="{{ true }}">
+                <label for="{{ l.fid }}" style="display:block;font-weight:500;font-size:15.5px;margin:0 0 3px;max-width:58ch;text-wrap:pretty">{{ l.q }}<sc-if value="{{ l.opt }}" hint-placeholder-val="{{ false }}"><em style="font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#7C8A81;border:1px solid #A9B9AC;border-radius:2px;padding:1px 5px;margin-left:7px;vertical-align:2px;white-space:nowrap">optional</em></sc-if></label>
+                <sc-if value="{{ l.hintInline }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:block;color:#7C8A81;font-size:13px;margin:0 0 10px">{{ l.hint }}</span>
+                </sc-if>
+
+                <sc-if value="{{ l.isLong }}" hint-placeholder-val="{{ false }}">
+                  <textarea id="{{ l.fid }}" value="{{ l.value }}" onChange="{{ l.onChange }}" style="width:100%;max-width:440px;min-height:88px;resize:vertical;background:#FCFDFB;border:1px solid #A9B9AC;border-radius:2px;padding:10px 11px;font-family:'Public Sans',system-ui,sans-serif;font-size:15px;line-height:1.55;color:#16241E;margin-top:8px"></textarea>
+                </sc-if>
+
+                <sc-if value="{{ l.isText }}" hint-placeholder-val="{{ false }}">
+                  <input type="text" id="{{ l.fid }}" value="{{ l.value }}" onChange="{{ l.onChange }}" style="width:100%;max-width:440px;background:#FCFDFB;border:1px solid #A9B9AC;border-radius:2px;padding:10px 11px;font-family:'Public Sans',system-ui,sans-serif;font-size:15px;color:#16241E;margin-top:8px" />
+                </sc-if>
+
+                <sc-if value="{{ l.isMoney }}" hint-placeholder-val="{{ false }}">
+                  <input type="text" inputmode="decimal" placeholder="$" id="{{ l.fid }}" value="{{ l.value }}" onChange="{{ l.onChange }}" onBlur="{{ l.onBlurMoney }}" style="width:100%;max-width:170px;background:#FCFDFB;border:1px solid #A9B9AC;border-radius:2px;padding:10px 11px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#16241E;margin-top:8px" />
+                </sc-if>
+
+                <sc-if value="{{ l.isNumber }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-flex;align-items:center;gap:8px;margin-top:8px">
+                    <input type="number" id="{{ l.fid }}" value="{{ l.value }}" onChange="{{ l.onChange }}" onWheel="{{ l.noWheel }}" style="width:150px;background:#FCFDFB;border:1px solid #A9B9AC;border-radius:2px;padding:10px 11px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#16241E" />
+                    <span style="color:#7C8A81;font-size:13px">{{ l.suffix }}</span>
+                  </span>
+                </sc-if>
+
+              </sc-if>
+
+              <sc-if value="{{ l.isCalc }}" hint-placeholder-val="{{ false }}">
+                <p style="display:block;font-weight:500;font-size:15.5px;margin:0 0 3px;max-width:58ch;color:#4C5D54;text-wrap:pretty">{{ l.q }}</p>
+                <sc-if value="{{ l.hintInline }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:block;color:#7C8A81;font-size:13px;margin:0 0 10px">{{ l.hint }}</span>
+                </sc-if>
+                <div style="display:inline-flex;align-items:center;min-height:44px;margin-top:8px;background:#E4EAE2;border:1px solid #CFDACF;border-radius:2px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:{{ l.calcColor }}">{{ l.calcValue }}</div>
+              </sc-if>
+
+              <sc-if value="{{ l.hasWarn }}" hint-placeholder-val="{{ false }}">
+                <span role="alert" style="display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.45;letter-spacing:.03em;color:#7A2E2E;border-left:2px solid #7A2E2E;padding-left:9px;max-width:52ch">{{ l.warn }}</span>
+              </sc-if>
+
+            </div>
+
+            <sc-if value="{{ l.showMargin }}" hint-placeholder-val="{{ false }}">
+              <div style="border-left:1px solid #CFDACF;padding:20px 0 20px 20px;font-size:12.5px;line-height:1.5;color:#7C8A81;text-wrap:pretty">
+                <sc-if value="{{ l.isCalc }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81;margin:0 0 5px">Computed</span>
+                </sc-if>
+                {{ l.hint }}
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:36px 0 4px">
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81;margin:0">{{ reviewMeta }}</p>
+        <h2 style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:clamp(22px,3.4vw,29px);margin:4px 0 8px;letter-spacing:-.01em">Your responses</h2>
+        <p data-noprint="1" style="margin:0;color:#4C5D54;font-size:14.5px;max-width:58ch;text-wrap:pretty">Check anything that looks wrong, then save this page as a PDF and send it over. We'll go through the rest in conversation.</p>
+        <button type="button" data-noprint="1" onClick="{{ onToggleBlanks }}" style="margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:none;border:1px solid #A9B9AC;border-radius:2px;color:#4C5D54;cursor:pointer;padding:9px 13px;min-height:38px" style-hover="border-color:#16241E;color:#16241E">{{ blanksLabel }}</button>
+      </div>
+
+      <div data-sheet="1" style="border:1px solid #A9B9AC;background:#FCFDFB;padding:22px 24px;margin-top:26px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-bottom:1px solid #CFDACF;padding-bottom:12px;margin-bottom:4px">
+          <h3 style="font-family:Spectral,Georgia,serif;font-size:20px;margin:0;font-weight:600">{{ firmLabel }}</h3>
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#7C8A81;margin:0">{{ sheetStamp }}</p>
+        </div>
+
+        <sc-for list="{{ reviewSections }}" as="rs" hint-placeholder-count="8">
+          <h4 data-break="1" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7A2E2E;margin:26px 0 0;padding-bottom:6px;border-bottom:1px solid #A9B9AC">{{ rs.title }}</h4>
+          <dl style="margin:0;font-size:14px">
+            <sc-for list="{{ rs.rows }}" as="r" hint-placeholder-count="6">
+              <div data-break="1" style="display:grid;grid-template-columns:{{ rs.cols }} 1fr;border-bottom:1px solid #CFDACF;padding:9px 0">
+                <dt style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7C8A81;padding-top:2px">{{ r.n }}</dt>
+                <dd style="margin:0;min-width:0">
+                  <span style="display:block;font-size:13px;color:#4C5D54;text-wrap:pretty">{{ r.q }}</span>
+                  <span style="display:block;margin-top:2px;white-space:pre-wrap;{{ r.style }}">{{ r.value }}</span>
+                </dd>
+              </div>
+            </sc-for>
+          </dl>
+        </sc-for>
+
+        <div data-break="1" style="margin-top:34px;border-top:2px solid #16241E;padding-top:16px">
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7A2E2E;margin:0 0 8px">Certification</p>
+          <p style="margin:0 0 22px;font-size:13.5px;color:#4C5D54;max-width:62ch;text-wrap:pretty">The figures above are given from records or from memory, to the best of my knowledge, for the purpose of this design partnership. They are approximate where marked approximate.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:26px 34px;max-width:720px">
+            <div>
+              <div style="border-bottom:1px solid #16241E;min-height:38px;font-size:15px;padding-bottom:4px">{{ certName }}</div>
+              <span style="display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81">Name</span>
+            </div>
+            <div>
+              <div style="border-bottom:1px solid #16241E;min-height:38px;font-size:15px;padding-bottom:4px">{{ certTitle }}</div>
+              <span style="display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81">Title or role</span>
+            </div>
+            <div>
+              <div style="border-bottom:1px solid #16241E;min-height:38px"></div>
+              <span style="display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81">Signature</span>
+            </div>
+            <div>
+              <div style="border-bottom:1px solid #16241E;min-height:38px;font-size:15px;padding-bottom:4px;font-family:'IBM Plex Mono',monospace">{{ today }}</div>
+              <span style="display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C8A81">Date</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="border-top:1px solid #A9B9AC;padding:14px 0 0;margin:26px 0 0;font-size:14.5px;color:#4C5D54;max-width:58ch;text-wrap:pretty">Thank you — this saves us an hour of asking you questions you'd rather answer once.</p>
+    </sc-if>
+  </main>
+
+  <div data-noprint="1" style="position:sticky;bottom:0;background:#EDF1EB;border-top:2px solid #16241E;padding:14px 0 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:30px">
+    <button type="button" onClick="{{ onBack }}" style="{{ backStyle }}">{{ backLabel }}</button>
+    <sc-if value="{{ inForm }}" hint-placeholder-val="{{ true }}">
+      <button type="button" onClick="{{ onNext }}" style="font-family:'Public Sans',system-ui,sans-serif;font-size:14.5px;font-weight:500;padding:12px 20px;border-radius:2px;cursor:pointer;border:1px solid #16241E;background:#16241E;color:#EDF1EB;min-height:44px">{{ nextLabel }}</button>
+      <button type="button" onClick="{{ onToggleView }}" style="font-family:'Public Sans',system-ui,sans-serif;font-size:14.5px;font-weight:500;padding:12px 20px;border-radius:2px;cursor:pointer;border:1px solid #A9B9AC;background:none;color:#4C5D54;min-height:44px">{{ viewLabel }}</button>
+    </sc-if>
+    <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+      <button type="button" onClick="{{ onPrint }}" style="font-family:'Public Sans',system-ui,sans-serif;font-size:14.5px;font-weight:500;padding:12px 20px;border-radius:2px;cursor:pointer;border:1px solid #16241E;background:#16241E;color:#EDF1EB;min-height:44px">Save as PDF</button>
+      <button type="button" onClick="{{ onDownload }}" style="font-family:'Public Sans',system-ui,sans-serif;font-size:14.5px;font-weight:500;padding:12px 20px;border-radius:2px;cursor:pointer;border:1px solid #A9B9AC;background:none;color:#4C5D54;min-height:44px">Download data file</button>
+    </sc-if>
+    <span style="flex:1"></span>
+    <button type="button" onClick="{{ onClear }}" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:none;border:0;color:#7C8A81;cursor:pointer;padding:8px 0;min-height:36px" style-hover="color:#7A2E2E">Clear draft</button>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:{{ saveColor }}">{{ saveText }}</span>
+  </div>
+</div>
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#EDF1EB"></rect>
+    <rect x="60" y="72" width="80" height="3" fill="#16241E"></rect>
+    <text x="100" y="112" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="30" font-weight="500" fill="#16241E" letter-spacing="1">DP-1</text>
+    <text x="100" y="132" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#7A2E2E" letter-spacing="2">SCHEDULE</text>
+    <rect x="60" y="146" width="80" height="1" fill="#A9B9AC"></rect>
+  </svg>
+</template>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;autosave&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behaviour&quot;},&quot;allowJumpAhead&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behaviour&quot;},&quot;showProgressCount&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behaviour&quot;}}">
+class Component extends DCLogic {
+  schema = [
+   {t:"The firm",note:"Basic facts about the practice.",lines:[
+    {id:"firmName",q:"Firm name",ty:"text"},
+    {id:"yearStarted",q:"Year the firm started",ty:"number"},
+    {id:"staffSeason",q:"People working in the firm during season, including you",ty:"number"},
+    {id:"staffYear",q:"Of that Line [[staffSeason]] total, how many work year-round",ty:"number"},
+    {id:"seasonalOnly",q:"People working season only",ty:"calc",
+     h:"Line [[staffSeason]] less Line [[staffYear]].",
+     calc:(d,h)=>{ if(h.blank(d.staffSeason)||h.blank(d.staffYear)) return ""; const v=h.n(d.staffSeason)-h.n(d.staffYear); return v<0?"Check Lines above":String(v); }},
+    {id:"services",q:"Services you offer",h:"Select all that apply.",ty:"multi",
+     opts:["Individual returns","Self-employed / Schedule C","Business entity returns","Bookkeeping","IRS resolution","Payroll","Tax planning"]},
+    {id:"offSeason",q:"What does the firm actually do between May and December",h:"Paid work, unpaid work, or quiet — whatever is true.",ty:"long"}
+   ]},
+   {t:"How clients arrive",note:"This section matters most. Think about actual people, not categories.",lines:[
+    {id:"sources",q:"Of your last 10 new clients, roughly how many came from each route",h:"Best guess — it should total about 10.",ty:"tally",
+     opts:["Referral from an existing client","Walked in or saw signage","Found you through online search","Social media","Community, church or association","Somewhere else"]},
+    {id:"referralShare",q:"Share of those arriving by referral",ty:"calc",
+     h:"The referral figure at Line [[sources]], against the total entered there.",
+     calc:(d,h)=>{ const t=d.sources||{}; const keys=Object.keys(t); if(!keys.length) return "";
+       let tot=0; keys.forEach(k=>{ tot+=Number(t[k]||0); });
+       const ref=Number(t["Referral from an existing client"]||0);
+       if(!tot) return ""; return ref+" of "+tot+"  ("+Math.round(ref/tot*100)+"%)"; }},
+    {id:"acqSpend",q:"What did you spend on getting new clients last season",h:"Total across everything. Zero is a real answer.",ty:"money"},
+    {id:"acqDetail",q:"What did you spend the Line [[acqSpend]] total on",h:"Signs, ads, sponsorship, print, anything.",ty:"long"},
+    {id:"paidHelp",q:"Have you ever paid someone to help you get clients",h:"What did they do, and how did it go.",ty:"long"},
+    {id:"website",q:"Do you have a website",ty:"one",opts:["Yes","No","Being built"]},
+    {id:"websiteUrl",q:"If yes, the address, and roughly when it was last updated",ty:"text"},
+    {id:"gbp",q:"Do you have a Google Business Profile",ty:"one",opts:["Yes","No","Not sure"]},
+    {id:"reviews",q:"Do you ask clients for reviews",ty:"one",opts:["Never","Sometimes","Always"]},
+    {id:"social",q:"Which social platforms do you use for the business",ty:"multi",
+     opts:["Facebook","Instagram","TikTok","LinkedIn","X","None"]},
+    {id:"wantClients",q:"How many new clients would you want next season",ty:"number"},
+    {id:"blocker",q:"What stops you from getting the Line [[wantClients]] figure today",ty:"long"}
+   ]},
+   {t:"Volume and capacity",note:"Approximate figures are fine. If you have records to hand, better.",lines:[
+    {id:"vol2026",q:"Returns filed in the 2026 season",ty:"number"},
+    {id:"vol2025",q:"Returns filed in the 2025 season",ty:"number"},
+    {id:"vol2024",q:"Returns filed in the 2024 season",ty:"number"},
+    {id:"volChange",q:"Change in volume since the 2024 season",ty:"calc",
+     h:"Line [[vol2026]] less Line [[vol2024]].",
+     calc:(d,h)=>{ if(h.blank(d.vol2026)||h.blank(d.vol2024)) return ""; const a=h.n(d.vol2026),b=h.n(d.vol2024),diff=a-b;
+       const pct=b?Math.round(diff/b*100):null; const s=(diff>0?"+":"")+diff+" returns";
+       return pct===null?s:s+"  ("+(pct>0?"+":"")+pct+"%)"; }},
+    {id:"perPerson",q:"Returns per person during the 2026 season",ty:"calc",
+     h:"Line [[vol2026]] divided by Line [[staffSeason]].",
+     calc:(d,h)=>{ if(h.blank(d.vol2026)||h.blank(d.staffSeason)||!h.n(d.staffSeason)) return ""; return (h.n(d.vol2026)/h.n(d.staffSeason)).toFixed(1); }},
+    {id:"pctBusiness",q:"Roughly what percent of the Line [[vol2026]] returns were business or self-employed",ty:"number",suffix:"%"},
+    {id:"returning",q:"Of the Line [[vol2025]] clients, roughly how many had been with you the year before",h:"A count or a percent — either is useful.",ty:"text"},
+    {id:"turnedAway",q:"Roughly how many people did you turn away last season",h:"Zero is a perfectly good answer.",ty:"number"},
+    {id:"hoursPerReturn",q:"Hours of your time on one straightforward individual return",h:"Your own time, start to finish. Not elapsed days.",ty:"number",suffix:"hours"},
+    {id:"capacity",q:"Could you handle more returns with your current setup",ty:"one",
+     opts:["Yes, plenty of room","Some room","No, at capacity"]}
+   ]},
+   {t:"The money",note:"Approximate is fine throughout, and anything you would rather discuss in person you can skip.",
+    notice:"These figures stay between us. They are used to size the problem, never shared, and never attributed to your firm.",lines:[
+    {id:"feeSimple",q:"Typical fee for a straightforward individual return",ty:"money"},
+    {id:"feeComplex",q:"Typical fee for a self-employed or business return",ty:"money"},
+    {id:"pctBank",q:"Percent of clients who pay through a refund transfer",ty:"number",suffix:"%"},
+    {id:"impliedBilling",q:"Implied billing for the 2026 season",ty:"calc",
+     h:"Line [[vol2026]] split at the Line [[pctBusiness]] mix, priced from Lines [[feeSimple]] and [[feeComplex]]. A rough arithmetic check, not a claim about your books.",
+     calc:(d,h)=>{ const v=h.n(d.vol2026),fs=h.m(d.feeSimple),fc=h.m(d.feeComplex);
+       if(!v||(!fs&&!fc)) return ""; const p=h.blank(d.pctBusiness)?0:h.n(d.pctBusiness)/100;
+       const total=v*(1-p)*fs + v*p*(fc||fs); return "$"+Math.round(total).toLocaleString(); }},
+    {id:"revenue",q:"Roughly what did the firm bill last season, in total",h:"Worth comparing with Line [[impliedBilling]]. A gap between the two is expected, and interesting.",ty:"money",opt:true},
+    {id:"staffCost",q:"Roughly what did you spend on staff last season",ty:"money",opt:true},
+    {id:"biggestCost",q:"After your own time, what is the biggest cost of running this firm",ty:"text"}
+   ]},
+   {t:"Tools and what they cost",note:"Everything you pay for to run the firm.",lines:[
+    {id:"software",q:"Which tax software do you use, and for how many years",ty:"text"},
+    {id:"softwareCost",q:"What did it cost you last season",ty:"money"},
+    {id:"supportRating",q:"How would you rate the support you get from your software vendor",ty:"one",
+     opts:["Good","Adequate","Poor","Never had to use it"]},
+    {id:"supportExp",q:"When your software breaks, who do you contact and how long does it take",ty:"long"},
+    {id:"switched",q:"Have you ever switched software, or nearly switched",h:"What made you switch, or what made you stay.",ty:"long"},
+    {id:"otherTools",q:"What else do you pay for to run the business",h:"One per line, with the cost if you know it.",ty:"long"}
+   ]},
+   {t:"How the season runs",note:"The mechanics of moving a client from first contact to filed.",lines:[
+    {id:"docs",q:"How do clients usually get their documents to you",ty:"multi",
+     opts:["Bring them in person","Email","Text or WhatsApp","Upload portal","Mail","Drop box"]},
+    {id:"signing",q:"How do clients sign",ty:"multi",opts:["In person","E-signature","Mail","Fax"]},
+    {id:"payment",q:"How do clients pay you",ty:"multi",
+     opts:["Cash","Card","Check","Deducted from refund","Bank transfer"]},
+    {id:"rejectRate",q:"Roughly what percent of returns get rejected on first submission",h:"A whole number out of 100 — enter 2 for two in every hundred.",ty:"number",suffix:"%"},
+    {id:"peakHours",q:"How many hours a week are you working at the peak of the season",ty:"number"},
+    {id:"seasonBreak",q:"What broke or went wrong last season that you had to work around",ty:"long"}
+   ]},
+   {t:"Friction and neighbours",note:"Nearly there. These are the ones worth taking a minute over.",lines:[
+    {id:"byHand",q:"What do you do by hand that you think software should do",ty:"long"},
+    {id:"spreadsheets",q:"What do you track in spreadsheets or on paper because your software will not",ty:"long"},
+    {id:"neighbours",q:"Who else prepares taxes within a few miles of you, and how do you compare",ty:"long"},
+    {id:"oneThing",q:"If one thing about running this business could be solved for you, what would it be",ty:"long"}
+   ]},
+   {t:"What you can share",note:"Last part, and the quickest. Nothing here is required.",
+    notice:"Documents tell us more in five minutes than an hour of questions. Share only what you are comfortable with.",lines:[
+    {id:"artifacts",q:"Which of these could you send us",h:"Select any you are willing to share.",ty:"multi",
+     opts:["Last season's software invoice","Your fee schedule","Your engagement letter","Your client intake form","A season tracking spreadsheet","Last season's profit and loss"]},
+    {id:"clientAccess",q:"Would you be open to us speaking with three to five of your clients",h:"Fifteen minutes each, about how they chose you.",ty:"one",
+     opts:["Yes","Maybe, let's discuss","No"]},
+    {id:"observe",q:"Would you be open to us observing for a day or two during season",h:"Watching the process only. Nothing about any client is recorded.",ty:"one",
+     opts:["Yes","Maybe, let's discuss","No"]},
+    {id:"peers",q:"Are there other preparers you would be willing to introduce us to",ty:"one",
+     opts:["Yes","Maybe, let's discuss","No"]},
+    {id:"anythingElse",q:"Anything else we should know",ty:"long",opt:true},
+    {id:"certName",q:"Name of the person completing this schedule",ty:"text"},
+    {id:"certTitle",q:"Title or role",ty:"text"}
+   ]}
+  ];
+
+  KEY = "firm-discovery-schedule-v1";
+  state = { part:0, data:{}, done:false, narrow:false, wide:false, view:"paged", focusKey:null, saved:"No changes yet", dirty:false, announce:"", blanks:true };
+
+  noWheel = (e) => { if (document.activeElement === e.target) e.target.blur(); };
+
+  helpers = {
+    blank:(v)=> v === undefined || v === null || v === "",
+    n:(v)=>{ const x = Number(v); return isNaN(x) ? 0 : x; },
+    m:(v)=>{ const x = Number(String(v == null ? "" : v).replace(/[^0-9.]/g, "")); return isNaN(x) ? 0 : x; }
+  };
+
+  componentDidMount(){
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p && p.responses) this.setState({ data:p.responses, part:p.part || 0, view:p.view || "paged", saved:"Draft restored" });
+      }
+    } catch (e) {}
+    this.mqN = window.matchMedia("(max-width: 620px)");
+    this.mqW = window.matchMedia("(min-width: 1040px)");
+    this.onMq = () => this.setState({ narrow:this.mqN.matches, wide:this.mqW.matches });
+    this.onMq();
+    if (this.mqN.addEventListener) { this.mqN.addEventListener("change", this.onMq); this.mqW.addEventListener("change", this.onMq); }
+  }
+  componentDidUpdate(){
+    const f = (this.state.data.firmName || "").trim();
+    const t = "Schedule DP-1" + (f ? " — " + f : "");
+    if (document.title !== t) document.title = t;
+  }
+  componentWillUnmount(){
+    if (this.mqN && this.mqN.removeEventListener) { this.mqN.removeEventListener("change", this.onMq); this.mqW.removeEventListener("change", this.onMq); }
+    clearTimeout(this._t);
+  }
+
+  nums(){
+    if (this._nums) return this._nums;
+    const m = {}; let n = 0;
+    this.schema.forEach(s => s.lines.forEach(l => { n++; m[l.id] = n; }));
+    this._nums = m; this._total = n;
+    return m;
+  }
+  num(id){ return this.nums()[id] || "?"; }
+  txt(s){ return String(s == null ? "" : s).replace(/\[\[(\w+)\]\]/g, (_, id) => this.num(id)); }
+  reviewTotal(){
+    let n = 0;
+    this.schema.forEach(s => s.lines.forEach(l => { if (l.id !== "certName" && l.id !== "certTitle") n++; }));
+    return n;
+  }
+  fillable(){
+    let n = 0;
+    this.schema.forEach(s => s.lines.forEach(l => { if (l.ty !== "calc") n++; }));
+    return n;
+  }
+
+  autosave(){ return this.props.autosave !== false; }
+
+  persist(){
+    if (!this.autosave()) { this.setState({ saved:"Autosave off — download to keep" }); return; }
+    try {
+      localStorage.setItem(this.KEY, JSON.stringify({ savedAt:new Date().toISOString(), part:this.state.part, view:this.state.view, responses:this.state.data }));
+      this.setState({ saved:"Saved " + new Date().toTimeString().slice(0,5), dirty:false });
+    } catch (e) { this.setState({ saved:"Could not save in this browser", dirty:true }); }
+  }
+
+  set(id, v){
+    this.setState(s => ({ data:Object.assign({}, s.data, { [id]:v }), dirty:true, saved:"Saving…" }), () => {
+      clearTimeout(this._t);
+      this._t = setTimeout(() => this.persist(), 500);
+    });
+  }
+  toggle(id, label){
+    const cur = this.state.data[id] || [];
+    this.set(id, cur.indexOf(label) > -1 ? cur.filter(x => x !== label) : cur.concat([label]));
+  }
+  setTally(id, key, v){
+    const cur = Object.assign({}, this.state.data[id] || {});
+    if (v === "") delete cur[key]; else cur[key] = Number(v);
+    this.set(id, cur);
+  }
+
+  go(p){
+    this.setState({ part:p, done:false, announce:"Part " + (p + 1) + " of " + this.schema.length + ". " + this.schema[p].t });
+    window.scrollTo({ top:0, behavior:"smooth" });
+    clearTimeout(this._t); this._t = setTimeout(() => this.persist(), 200);
+  }
+  finish(){
+    this.setState({ done:true, announce:"Review your responses." });
+    window.scrollTo({ top:0, behavior:"smooth" });
+    this.persist();
+  }
+  clearDraft(){
+    if (!window.confirm("Clear every line on this schedule? This cannot be undone.")) return;
+    try { localStorage.removeItem(this.KEY); } catch (e) {}
+    clearTimeout(this._t);
+    this.setState({ data:{}, part:0, done:false, saved:"Draft cleared", dirty:false, announce:"Draft cleared. Every line is empty." });
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+  fmtMoney(id, v){
+    const s = String(v == null ? "" : v).trim();
+    if (!s || !/[0-9]/.test(s)) return;
+    const n = Number(s.replace(/[^0-9.]/g, ""));
+    if (isNaN(n)) return;
+    const out = "$" + Math.round(n).toLocaleString();
+    if (out !== s) this.set(id, out);
+  }
+  toggleView(){
+    const v = this.state.view === "whole" ? "paged" : "whole";
+    this.setState({ view:v, announce:v === "whole" ? "Whole sheet. All parts shown." : "Paged view. One part at a time." });
+    window.scrollTo({ top:0, behavior:"smooth" });
+    clearTimeout(this._t); this._t = setTimeout(() => this.persist(), 200);
+  }
+
+  answered(){
+    let n = 0;
+    this.schema.forEach(s => s.lines.forEach(l => {
+      if (l.ty === "calc") return;
+      const v = this.state.data[l.id];
+      if (v === undefined || v === null || v === "") return;
+      if (Array.isArray(v) && !v.length) return;
+      if (typeof v === "object" && !Array.isArray(v) && !Object.keys(v).length) return;
+      n++;
+    }));
+    return n;
+  }
+
+  warn(l, v){
+    if (v === undefined || v === null || v === "") return "";
+    if (l.ty === "tally") {
+      let tot = 0; Object.keys(v || {}).forEach(k => { tot += Number(v[k] || 0); });
+      if (tot && (tot > 13 || tot < 7)) return "These add to " + tot + ", not about 10. Check the counts.";
+      return "";
+    }
+    const n = Number(v);
+    if (isNaN(n)) return "";
+    if (l.suffix === "%" && (n < 0 || n > 100)) return "Percentages run 0 to 100";
+    if (l.id === "yearStarted" && (n < 1900 || n > 2030)) return "Check the year";
+    if (l.id === "staffYear") {
+      const tot = Number(this.state.data.staffSeason);
+      if (!isNaN(tot) && this.state.data.staffSeason !== "" && n > tot)
+        return "More than the " + tot + " entered at Line " + this.num("staffSeason") + ". Year-round staff are part of that total.";
+    }
+    if (l.suffix === "%" && n > 0 && n < 1) return "Whole percents — enter 1 for one percent, not .01";
+    if (l.ty === "number" && n < 0) return "That reads as negative";
+    return "";
+  }
+
+  flat(v){
+    if (Array.isArray(v)) return v.join(", ");
+    if (v && typeof v === "object") return Object.keys(v).map(k => k + ": " + v[k]).join("\n");
+    return v;
+  }
+
+  download(){
+    const payload = { savedAt:new Date().toISOString(), responses:this.state.data };
+    const name = (this.state.data.firmName || "firm").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" }));
+    a.download = name + "-discovery.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  chipStyle(checked, focused){
+    return "display:flex;align-items:center;min-height:44px;border:1px solid " + (checked ? "#16241E" : "#A9B9AC") +
+      ";background:" + (checked ? "#16241E" : "#FCFDFB") + ";color:" + (checked ? "#EDF1EB" : "#16241E") +
+      ";font-weight:" + (checked ? "500" : "400") + ";border-radius:2px;padding:8px 14px;font-size:14px;cursor:pointer;line-height:1.3" +
+      (focused ? ";outline:2px solid #1F5D4C;outline-offset:2px" : "");
+  }
+
+  buildLines(sec){
+    const st = this.state, narrow = st.narrow, wide = st.wide && !narrow;
+    const grid = narrow ? "32px 1fr" : (wide ? "46px minmax(0,1fr) 260px" : "46px 1fr");
+    return sec.lines.map((l, i) => {
+      const v = st.data[l.id];
+      const isChoice = l.ty === "one" || l.ty === "multi";
+      const isTally = l.ty === "tally";
+      const isCalc = l.ty === "calc";
+      const w = isCalc ? "" : this.warn(l, v);
+      const hint = this.txt(l.h || "");
+      const item = {
+        key: l.id, n:String(this.num(l.id)), q:this.txt(l.q), fid:"f_" + l.id,
+        hint, hasHint:!!hint,
+        hintInline: !!hint && !wide,
+        showMargin: wide && (!!hint || isCalc),
+        grid, pad: narrow ? "14px" : "20px",
+        bb: i === sec.lines.length - 1 ? "#CFDACF" : "transparent",
+        isGroup: isChoice || isTally, isChoice, isTally, isCalc,
+        isPlain: !isChoice && !isTally && !isCalc,
+        isText: l.ty === "text", isNumber: l.ty === "number", isMoney: l.ty === "money", isLong: l.ty === "long",
+        opt: !!l.opt, suffix: l.suffix || "",
+        value: v === undefined || v === null ? "" : v,
+        warn: w, hasWarn: !!w,
+        noWheel: this.noWheel,
+        onChange: (e) => this.set(l.id, e.target.value)
+      };
+      if (isCalc) {
+        let out = "";
+        try { out = l.calc(st.data, this.helpers) || ""; } catch (e) { out = ""; }
+        const bad = /^Check/.test(out);
+        item.calcValue = out || "Awaiting the lines above";
+        item.calcColor = out ? (bad ? "#7A2E2E" : "#16241E") : "#7C8A81";
+      }
+      if (l.ty === "money") item.onBlurMoney = (e) => this.fmtMoney(l.id, e.target.value);
+      if (isChoice) {
+        const cur = l.ty === "one" ? (v ? [v] : []) : (v || []);
+        item.opts = l.opts.map((o, j) => {
+          const key = l.id + "_" + j, checked = cur.indexOf(o) > -1;
+          return {
+            key, label:o, id:"f_" + key, name:"f_" + l.id,
+            type: l.ty === "one" ? "radio" : "checkbox",
+            checked,
+            onChange: () => l.ty === "one" ? this.set(l.id, o) : this.toggle(l.id, o),
+            onFocus: () => this.setState({ focusKey:key }),
+            onBlur: () => this.setState({ focusKey:null }),
+            style: this.chipStyle(checked, st.focusKey === key)
+          };
+        });
+      }
+      if (isTally) {
+        const cur = v || {};
+        let total = 0;
+        l.opts.forEach(o => { total += Number(cur[o] || 0); });
+        item.rows = l.opts.map((o, j) => ({
+          key: l.id + "_" + j, label:o, id:"f_" + l.id + "_" + j,
+          value: cur[o] === undefined ? "" : String(cur[o]),
+          noWheel: this.noWheel,
+          onChange: (e) => this.setTally(l.id, o, e.target.value)
+        }));
+        const near = total >= 9 && total <= 11;
+        const off = total > 13 || (total > 0 && total < 7);
+        item.sumText = "Total: " + total + (total === 0 || near ? "" : " · about 10 expected");
+        item.sumColor = off ? "#7A2E2E" : near ? "#1F5D4C" : "#7C8A81";
+      }
+      return item;
+    });
+  }
+
+  renderVals(){
+    const st = this.state, S = this.schema, part = Math.min(st.part, S.length - 1);
+    const narrow = st.narrow, wide = st.wide && !narrow;
+    const whole = st.view === "whole";
+    const jump = this.props.allowJumpAhead !== false;
+    const total = this.fillable();
+    const count = this.answered();
+    const showCount = this.props.showProgressCount !== false;
+
+    const rail = S.map((s, i) => {
+      const isCur = i === part && !st.done && !whole, isDone = i < part || st.done;
+      const color = isCur ? "#16241E" : (isDone ? "#4C5D54" : "#7C8A81");
+      const border = isCur ? "#16241E" : (isDone ? "#A9B9AC" : "#CFDACF");
+      const usable = jump || i <= part;
+      return {
+        key:"r" + i,
+        label:"Part " + (i + 1),
+        aria:"Part " + (i + 1) + ": " + s.t,
+        current: isCur ? "step" : undefined,
+        onClick: usable ? () => this.go(i) : () => {},
+        style:"width:100%;background:none;border:0;border-top:3px solid " + border + ";padding:12px 4px 0;min-height:44px;cursor:" +
+          (usable ? "pointer" : "default") + ";text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:" +
+          color + ";font-weight:" + (isCur ? "500" : "400"),
+        dotStyle:"width:26px;height:26px;padding:0;border:0;background:none;cursor:pointer;border-top:3px solid " + border
+      };
+    });
+
+    const idxs = whole ? S.map((_, i) => i) : [part];
+    const sections = idxs.map(i => ({
+      key:"s" + i,
+      meta: whole ? "Part " + (i + 1) + " of " + S.length : "Part " + (i + 1) + " of " + S.length + (showCount ? " · " + count + " of " + total + " lines answered" : ""),
+      title:S[i].t, note:S[i].note,
+      notice:S[i].notice || "", hasNotice:!!S[i].notice,
+      cols: narrow ? "32px" : "46px", pad: narrow ? "14px" : "20px",
+      lines:this.buildLines(S[i])
+    }));
+
+    const blanks = st.blanks;
+    const reviewSections = S.map((s, i) => ({
+      key:"rv" + i,
+      title:"Part " + (i + 1) + " · " + s.t,
+      cols: narrow ? "32px" : "46px",
+      rows: s.lines.filter(l => {
+        if (l.id === "certName" || l.id === "certTitle") return false;
+        if (blanks) return true;
+        let v;
+        if (l.ty === "calc") { try { v = l.calc(st.data, this.helpers) || ""; } catch (e) { v = ""; } }
+        else v = this.flat(st.data[l.id]);
+        return v !== undefined && v !== null && v !== "";
+      }).map(l => {
+        let v;
+        if (l.ty === "calc") { try { v = l.calc(st.data, this.helpers) || ""; } catch (e) { v = ""; } }
+        else v = this.flat(st.data[l.id]);
+        const has = v !== undefined && v !== null && v !== "";
+        return {
+          key:l.id, n:String(this.num(l.id)), q:this.txt(l.q),
+          value: has ? String(v) : "Not answered",
+          style: has
+            ? "font-size:14.5px;color:#16241E" + (l.ty === "calc" || l.ty === "money" || l.ty === "number" ? ";font-family:'IBM Plex Mono',monospace" : "")
+            : "font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#4C5D54"
+        };
+      })
+    })).filter(rs => rs.rows.length);
+
+    return {
+      announce: st.announce,
+      shellMax: wide ? "1180px" : "860px",
+      inForm: !st.done, done: st.done,
+      showWideRail: !narrow && !st.done && !whole,
+      showCompactRail: narrow && !st.done && !whole,
+      showSheetHead: whole && !st.done,
+      sheetHead: "Whole sheet · " + total + " lines · " + count + " answered",
+      compactLabel: "Part " + (part + 1) + " of " + S.length,
+      rail, sections, reviewSections,
+      reviewMeta: "Complete · " + count + " of " + total + " lines answered",
+      firmLabel: st.data.firmName || "Firm record",
+      sheetStamp: "Schedule DP-1 · " + new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" }),
+      today: new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" }),
+      certName: st.data.certName || "",
+      certTitle: st.data.certTitle || "",
+      nextLabel: whole ? "Finish and review" : (part === S.length - 1 ? "Finish and review" : "Continue"),
+      viewLabel: whole ? "One part at a time" : "Whole sheet",
+      backLabel: st.done ? "Back to the schedule" : "Back",
+      backStyle:"font-family:'Public Sans',system-ui,sans-serif;font-size:14.5px;font-weight:500;padding:12px 20px;border-radius:2px;cursor:pointer;border:1px solid #16241E;background:none;color:#16241E;min-height:44px;visibility:" +
+        ((part === 0 || whole) && !st.done ? "hidden" : "visible"),
+      onBack: () => { if (st.done) { this.setState({ done:false }); window.scrollTo({ top:0, behavior:"smooth" }); } else if (part > 0) this.go(part - 1); },
+      onNext: () => { if (!whole && part < S.length - 1) this.go(part + 1); else this.finish(); },
+      onToggleView: () => this.toggleView(),
+      onClear: () => this.clearDraft(),
+      blanksLabel: blanks ? "Hide unanswered lines" : "Show all " + this.reviewTotal() + " lines",
+      onToggleBlanks: () => this.setState(s => ({ blanks: !s.blanks, announce: s.blanks ? "Unanswered lines hidden." : "All lines shown." })),
+      onPrint: () => window.print(),
+      onDownload: () => this.download(),
+      saveText: st.saved,
+      saveColor: st.dirty ? "#7A2E2E" : "#7C8A81"
+    };
+  }
+}
+</script>
+</body>
+</html>
