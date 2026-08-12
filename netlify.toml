@@ -2,9 +2,10 @@
   publish = "."
   command = ""
 
-# index.html is a single self-contained file (fonts and runtime inlined).
-# There is no build step and no server: every answer stays in the
-# respondent's own browser until they save a PDF or download the data file.
+# index.html (Schedule DP-1) and dp-2.html (Schedule DP-2) are single
+# self-contained files: fonts and runtime inlined, no build step, no server.
+# Every answer stays in the respondent's own browser until they save a PDF
+# or download the data file.
 
 [[headers]]
   for = "/*"
@@ -13,9 +14,28 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer"
     Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=()"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
-# The source component is kept in /src for editing, not for serving.
+# Clean URLs for the two schedules.
+[[redirects]]
+  from = "/dp-1"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/dp-2"
+  to = "/dp-2.html"
+  status = 200
+
+# The source components are kept in /src for editing, not for serving.
 [[redirects]]
   from = "/src/*"
+  to = "/"
+  status = 404
+
+# The retired DP1 build is kept in /archive for reference only, not for serving.
+[[redirects]]
+  from = "/archive/*"
   to = "/"
   status = 404

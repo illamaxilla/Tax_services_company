@@ -146,6 +146,9 @@
                   </span>
                 </sc-if>
 
+                <sc-if value="{{ l.hasWarn }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:#7A2E2E">{{ l.warn }}</span>
+                </sc-if>
               </sc-if>
 
               <sc-if value="{{ l.isCalc }}" hint-placeholder-val="{{ false }}">
@@ -154,10 +157,6 @@
                   <span style="display:block;color:#7C8A81;font-size:13px;margin:0 0 10px">{{ l.hint }}</span>
                 </sc-if>
                 <div style="display:inline-flex;align-items:center;min-height:44px;margin-top:8px;background:#E4EAE2;border:1px solid #CFDACF;border-radius:2px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:{{ l.calcColor }}">{{ l.calcValue }}</div>
-              </sc-if>
-
-              <sc-if value="{{ l.hasWarn }}" hint-placeholder-val="{{ false }}">
-                <span role="alert" style="display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.45;letter-spacing:.03em;color:#7A2E2E;border-left:2px solid #7A2E2E;padding-left:9px;max-width:52ch">{{ l.warn }}</span>
               </sc-if>
 
             </div>
@@ -272,27 +271,6 @@ class Component extends DCLogic {
      opts:["Individual returns","Self-employed / Schedule C","Business entity returns","Bookkeeping","IRS resolution","Payroll","Tax planning"]},
     {id:"offSeason",q:"What does the firm actually do between May and December",h:"Paid work, unpaid work, or quiet — whatever is true.",ty:"long"}
    ]},
-   {t:"How clients arrive",note:"This section matters most. Think about actual people, not categories.",lines:[
-    {id:"sources",q:"Of your last 10 new clients, roughly how many came from each route",h:"Best guess — it should total about 10.",ty:"tally",
-     opts:["Referral from an existing client","Walked in or saw signage","Found you through online search","Social media","Community, church or association","Somewhere else"]},
-    {id:"referralShare",q:"Share of those arriving by referral",ty:"calc",
-     h:"The referral figure at Line [[sources]], against the total entered there.",
-     calc:(d,h)=>{ const t=d.sources||{}; const keys=Object.keys(t); if(!keys.length) return "";
-       let tot=0; keys.forEach(k=>{ tot+=Number(t[k]||0); });
-       const ref=Number(t["Referral from an existing client"]||0);
-       if(!tot) return ""; return ref+" of "+tot+"  ("+Math.round(ref/tot*100)+"%)"; }},
-    {id:"acqSpend",q:"What did you spend on getting new clients last season",h:"Total across everything. Zero is a real answer.",ty:"money"},
-    {id:"acqDetail",q:"What did you spend the Line [[acqSpend]] total on",h:"Signs, ads, sponsorship, print, anything.",ty:"long"},
-    {id:"paidHelp",q:"Have you ever paid someone to help you get clients",h:"What did they do, and how did it go.",ty:"long"},
-    {id:"website",q:"Do you have a website",ty:"one",opts:["Yes","No","Being built"]},
-    {id:"websiteUrl",q:"If yes, the address, and roughly when it was last updated",ty:"text"},
-    {id:"gbp",q:"Do you have a Google Business Profile",ty:"one",opts:["Yes","No","Not sure"]},
-    {id:"reviews",q:"Do you ask clients for reviews",ty:"one",opts:["Never","Sometimes","Always"]},
-    {id:"social",q:"Which social platforms do you use for the business",ty:"multi",
-     opts:["Facebook","Instagram","TikTok","LinkedIn","X","None"]},
-    {id:"wantClients",q:"How many new clients would you want next season",ty:"number"},
-    {id:"blocker",q:"What stops you from getting the Line [[wantClients]] figure today",ty:"long"}
-   ]},
    {t:"Volume and capacity",note:"Approximate figures are fine. If you have records to hand, better.",lines:[
     {id:"vol2026",q:"Returns filed in the 2026 season",ty:"number"},
     {id:"vol2025",q:"Returns filed in the 2025 season",ty:"number"},
@@ -308,7 +286,7 @@ class Component extends DCLogic {
     {id:"pctBusiness",q:"Roughly what percent of the Line [[vol2026]] returns were business or self-employed",ty:"number",suffix:"%"},
     {id:"returning",q:"Of the Line [[vol2025]] clients, roughly how many had been with you the year before",h:"A count or a percent — either is useful.",ty:"text"},
     {id:"turnedAway",q:"Roughly how many people did you turn away last season",h:"Zero is a perfectly good answer.",ty:"number"},
-    {id:"hoursPerReturn",q:"Hours of your time on one straightforward individual return",h:"Your own time, start to finish. Not elapsed days.",ty:"number",suffix:"hours"},
+    {id:"hoursPerReturn",q:"Roughly how many hours does a straightforward individual return take you, start to finish",ty:"number"},
     {id:"capacity",q:"Could you handle more returns with your current setup",ty:"one",
      opts:["Yes, plenty of room","Some room","No, at capacity"]}
    ]},
@@ -335,13 +313,34 @@ class Component extends DCLogic {
     {id:"switched",q:"Have you ever switched software, or nearly switched",h:"What made you switch, or what made you stay.",ty:"long"},
     {id:"otherTools",q:"What else do you pay for to run the business",h:"One per line, with the cost if you know it.",ty:"long"}
    ]},
+   {t:"How clients arrive",note:"This section matters most. Think about actual people, not categories.",lines:[
+    {id:"sources",q:"Of your last 10 new clients, roughly how many came from each route",h:"Best guess — it should total about 10.",ty:"tally",
+     opts:["Referral from an existing client","Walked in or saw signage","Found you through online search","Social media","Community, church or association","Somewhere else"]},
+    {id:"referralShare",q:"Share of those arriving by referral",ty:"calc",
+     h:"The referral figure at Line [[sources]], against the total entered there.",
+     calc:(d,h)=>{ const t=d.sources||{}; const keys=Object.keys(t); if(!keys.length) return "";
+       let tot=0; keys.forEach(k=>{ tot+=Number(t[k]||0); });
+       const ref=Number(t["Referral from an existing client"]||0);
+       if(!tot) return ""; return ref+" of "+tot+"  ("+Math.round(ref/tot*100)+"%)"; }},
+    {id:"acqSpend",q:"What did you spend on getting new clients last season",h:"Total across everything. Zero is a real answer.",ty:"money"},
+    {id:"acqDetail",q:"What did you spend the Line [[acqSpend]] total on",h:"Signs, ads, sponsorship, print, anything.",ty:"long"},
+    {id:"paidHelp",q:"Have you ever paid someone to help you get clients",h:"What did they do, and how did it go.",ty:"long"},
+    {id:"website",q:"Do you have a website",ty:"one",opts:["Yes","No","Being built"]},
+    {id:"websiteUrl",q:"If yes, the address, and roughly when it was last updated",ty:"text"},
+    {id:"gbp",q:"Do you have a Google Business Profile",ty:"one",opts:["Yes","No","Not sure"]},
+    {id:"reviews",q:"Do you ask clients for reviews",ty:"one",opts:["Never","Sometimes","Always"]},
+    {id:"social",q:"Which social platforms do you use for the business",ty:"multi",
+     opts:["Facebook","Instagram","TikTok","LinkedIn","X","None"]},
+    {id:"wantClients",q:"How many new clients would you want next season",ty:"number"},
+    {id:"blocker",q:"What stops you from getting the Line [[wantClients]] figure today",ty:"long"}
+   ]},
    {t:"How the season runs",note:"The mechanics of moving a client from first contact to filed.",lines:[
     {id:"docs",q:"How do clients usually get their documents to you",ty:"multi",
      opts:["Bring them in person","Email","Text or WhatsApp","Upload portal","Mail","Drop box"]},
     {id:"signing",q:"How do clients sign",ty:"multi",opts:["In person","E-signature","Mail","Fax"]},
     {id:"payment",q:"How do clients pay you",ty:"multi",
      opts:["Cash","Card","Check","Deducted from refund","Bank transfer"]},
-    {id:"rejectRate",q:"Roughly what percent of returns get rejected on first submission",h:"A whole number out of 100 — enter 2 for two in every hundred.",ty:"number",suffix:"%"},
+    {id:"rejectRate",q:"Roughly what percent of returns get rejected on first submission",ty:"number",suffix:"%"},
     {id:"peakHours",q:"How many hours a week are you working at the peak of the season",ty:"number"},
     {id:"seasonBreak",q:"What broke or went wrong last season that you had to work around",ty:"long"}
    ]},
@@ -495,21 +494,10 @@ class Component extends DCLogic {
 
   warn(l, v){
     if (v === undefined || v === null || v === "") return "";
-    if (l.ty === "tally") {
-      let tot = 0; Object.keys(v || {}).forEach(k => { tot += Number(v[k] || 0); });
-      if (tot && (tot > 13 || tot < 7)) return "These add to " + tot + ", not about 10. Check the counts.";
-      return "";
-    }
     const n = Number(v);
     if (isNaN(n)) return "";
     if (l.suffix === "%" && (n < 0 || n > 100)) return "Percentages run 0 to 100";
     if (l.id === "yearStarted" && (n < 1900 || n > 2030)) return "Check the year";
-    if (l.id === "staffYear") {
-      const tot = Number(this.state.data.staffSeason);
-      if (!isNaN(tot) && this.state.data.staffSeason !== "" && n > tot)
-        return "More than the " + tot + " entered at Line " + this.num("staffSeason") + ". Year-round staff are part of that total.";
-    }
-    if (l.suffix === "%" && n > 0 && n < 1) return "Whole percents — enter 1 for one percent, not .01";
     if (l.ty === "number" && n < 0) return "That reads as negative";
     return "";
   }
@@ -597,9 +585,8 @@ class Component extends DCLogic {
           onChange: (e) => this.setTally(l.id, o, e.target.value)
         }));
         const near = total >= 9 && total <= 11;
-        const off = total > 13 || (total > 0 && total < 7);
         item.sumText = "Total: " + total + (total === 0 || near ? "" : " · about 10 expected");
-        item.sumColor = off ? "#7A2E2E" : near ? "#1F5D4C" : "#7C8A81";
+        item.sumColor = near ? "#1F5D4C" : "#7C8A81";
       }
       return item;
     });
