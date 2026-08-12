@@ -1,0 +1,21 @@
+[build]
+  publish = "."
+  command = ""
+
+# index.html is a single self-contained file (fonts and runtime inlined).
+# There is no build step and no server: every answer stays in the
+# respondent's own browser until they save a PDF or download the data file.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=()"
+
+# The source component is kept in /src for editing, not for serving.
+[[redirects]]
+  from = "/src/*"
+  to = "/"
+  status = 404
