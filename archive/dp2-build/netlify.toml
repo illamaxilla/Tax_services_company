@@ -2,10 +2,10 @@
   publish = "."
   command = ""
 
-# index.html is the Kingdom Tax Services client documents pack (proposal +
-# action plan): a single self-contained file with fonts and runtime inlined,
-# no build step, no server. Everything the reader enters stays in their own
-# browser until they save a PDF or download the data file.
+# index.html is the follow-up questionnaire (Schedule DP-2): a single
+# self-contained file with fonts and runtime inlined, no build step, no
+# server. Every answer stays in the respondent's own browser until they
+# save a PDF or download the data file.
 
 [[headers]]
   for = "/*"
@@ -17,13 +17,8 @@
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# The documents pack is the only page served, at the site root. Old clean
-# URLs point back to it so no prior link dead-ends.
-[[redirects]]
-  from = "/documents"
-  to = "/"
-  status = 301
-
+# The follow-up questionnaire is the only schedule served, at the site root.
+# Old clean URLs point back to it so no prior link dead-ends.
 [[redirects]]
   from = "/dp-1"
   to = "/"
@@ -40,8 +35,7 @@
   to = "/"
   status = 404
 
-# Retired builds and the discovery/follow-up questionnaires are kept in
-# /archive for reference only, not for serving.
+# The retired DP1 build is kept in /archive for reference only, not for serving.
 [[redirects]]
   from = "/archive/*"
   to = "/"
